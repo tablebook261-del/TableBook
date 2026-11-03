@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8027283498",
+    "project_id": "tablebook-7dac6",
+    "storage_bucket": "tablebook-7dac6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8027283498:android:205b81140748ace7b9a353",
+        "android_client_info": {
+          "package_name": "uk.ac.tees.mad.tablebook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlaxU1NU_B41TeVi0xwzU1GsV8rWMLzqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
