@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "845001570904",
+    "project_id": "tablebook-b1c2a",
+    "storage_bucket": "tablebook-b1c2a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845001570904:android:586e96fdb14f613052682d",
+        "android_client_info": {
+          "package_name": "com.example.tablebook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcmZIZ2CtJSusAmvAhwMBJtYgIWG49JU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
