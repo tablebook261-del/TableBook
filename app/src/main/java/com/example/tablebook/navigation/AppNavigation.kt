@@ -8,46 +8,79 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tablebook.ui.screens.LoginScreen
+import com.example.tablebook.ui.screens.RegisterScreen
+import com.example.tablebook.viewmodel.AuthViewModel
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = viewModel()
 
     NavHost(
         navController = navController,
         startDestination = AppRoutes.SPLASH
     ) {
         composable(route = AppRoutes.SPLASH) {
-            PlaceholderScreen(
-                title = "TableBook",
-                message = "Splash screen will be developed next."
-            )
+            val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
+
+            LaunchedEffect(isAuthenticated) {
+                val destination = if (isAuthenticated) AppRoutes.HOME else AppRoutes.LOGIN
+                navController.navigate(destination) {
+                    popUpTo(AppRoutes.SPLASH) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+
+            SplashScreen()
         }
 
         composable(route = AppRoutes.LOGIN) {
-            PlaceholderScreen(
-                title = "Login",
-                message = "Login screen will be developed next."
+            LoginScreen(
+                viewModel = authViewModel,
+                onLoginSuccess = {
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onRegisterClick = {
+                    authViewModel.clearError()
+                    navController.navigate(AppRoutes.REGISTER)
+                }
             )
         }
 
         composable(route = AppRoutes.REGISTER) {
-            PlaceholderScreen(
-                title = "Register",
-                message = "Register screen will be developed next."
+            RegisterScreen(
+                viewModel = authViewModel,
+                onRegisterSuccess = {
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onLoginClick = {
+                    authViewModel.clearError()
+                    navController.popBackStack()
+                }
             )
         }
 
         composable(route = AppRoutes.HOME) {
             PlaceholderScreen(
                 title = "Home",
-                message = "Home screen will be developed in Sprint 2."
+                message = "You are signed in. The reservation home screen will be developed in Sprint 2."
             )
         }
 
@@ -55,6 +88,33 @@ fun AppNavigation() {
             PlaceholderScreen(
                 title = "Reservation Details",
                 message = "Reservation details will be developed in Sprint 3."
+            )
+        }
+    }
+}
+
+@Composable
+private fun SplashScreen() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "TableBook",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Your table, made simple",
+                modifier = Modifier.padding(top = 8.dp),
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
