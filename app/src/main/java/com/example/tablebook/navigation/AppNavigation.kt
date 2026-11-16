@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tablebook.ui.screens.HomeScreen
 import com.example.tablebook.ui.screens.LoginScreen
 import com.example.tablebook.ui.screens.RegisterScreen
 import com.example.tablebook.viewmodel.AuthViewModel
@@ -78,10 +79,7 @@ fun AppNavigation() {
         }
 
         composable(route = AppRoutes.HOME) {
-            PlaceholderScreen(
-                title = "Home",
-                message = "You are signed in. The reservation home screen will be developed in Sprint 2."
-            )
+            HomeScreen()
         }
 
         composable(route = AppRoutes.RESERVATION_DETAILS) {
