@@ -22,14 +22,7 @@ import com.example.tablebook.ui.components.ReservationCard
 import com.example.tablebook.ui.components.ReservationDatePicker
 import com.example.tablebook.ui.components.TimeSlotItem
 import com.example.tablebook.ui.components.getTodayDateMillis
-
-private val reservationTimes = listOf(
-    "12:00 PM",
-    "1:00 PM",
-    "2:00 PM",
-    "7:00 PM",
-    "8:00 PM"
-)
+import com.example.tablebook.model.reservationTimeSlots
 
 @Composable
 fun HomeScreen() {
@@ -87,10 +80,10 @@ fun HomeScreen() {
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            reservationTimes.forEach { time ->
+            reservationTimeSlots.forEach { slot ->
                 TimeSlotItem(
-                    time = time,
-                    status = "Available"
+                    time = slot.time,
+                    status = slot.status.displayName
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
