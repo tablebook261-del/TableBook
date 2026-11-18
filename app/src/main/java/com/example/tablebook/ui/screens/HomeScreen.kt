@@ -1,11 +1,8 @@
 package com.example.tablebook.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -14,11 +11,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tablebook.ui.components.ReservationCard
+import com.example.tablebook.ui.components.ReservationDatePicker
 import com.example.tablebook.ui.components.TimeSlotItem
+import com.example.tablebook.ui.components.getTodayDateMillis
 
 private val reservationTimes = listOf(
     "12:00 PM",
@@ -30,6 +33,10 @@ private val reservationTimes = listOf(
 
 @Composable
 fun HomeScreen() {
+    var selectedDateMillis by remember {
+        mutableLongStateOf(getTodayDateMillis())
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -53,6 +60,13 @@ fun HomeScreen() {
                 text = "Book your table with ease.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            ReservationDatePicker(
+                selectedDateMillis = selectedDateMillis,
+                onDateSelected = { selectedDateMillis = it }
             )
 
             Spacer(modifier = Modifier.height(28.dp))
