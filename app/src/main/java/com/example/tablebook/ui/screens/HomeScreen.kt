@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
@@ -18,16 +20,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tablebook.ui.components.ReservationCard
 import com.example.tablebook.ui.components.ReservationDatePicker
 import com.example.tablebook.ui.components.TimeSlotItem
 import com.example.tablebook.ui.components.getTodayDateMillis
+import com.example.tablebook.model.SlotStatus
 import com.example.tablebook.model.reservationTimeSlots
+import com.example.tablebook.viewmodel.BookingViewModel
+import androidx.compose.runtime.collectAsState
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun HomeScreen() {
     var selectedDateMillis by remember {
         mutableLongStateOf(getTodayDateMillis())
+    }
+    val bookingViewModel: BookingViewModel = viewModel()
+    val bookingState by bookingViewModel.screenState.collectAsState()
+
+    // Load bookings whenever the selected date changes.
+    LaunchedEffect(selectedDateMillis) {
+        bookingViewModel.loadReservations(formatFirestoreDate(selectedDateMillis))
     }
 
     Surface(
@@ -80,10 +97,32 @@ fun HomeScreen() {
 
             Spacer(modifier = Modifier.height(14.dp))
 
+            if (bookingState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+            }
+
+            bookingState.errorMessage?.let { message ->
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
             reservationTimeSlots.forEach { slot ->
+                val status = when {
+                    bookingState.isLoading -> "Loading..."
+                    bookingState.errorMessage != null -> "Unavailable"
+                    bookingState.bookedTimes.contains(slot.time) -> SlotStatus.BOOKED.displayName
+                    else -> SlotStatus.AVAILABLE.displayName
+                }
+
                 TimeSlotItem(
                     time = slot.time,
-                    status = slot.status.displayName
+                    status = status
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -101,4 +140,12 @@ fun HomeScreen() {
             ReservationCard()
         }
     }
+}
+
+
+// Use the same date format for Firestore queries and saved reservations.
+private fun formatFirestoreDate(dateMillis: Long): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.UK)
+    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+    return dateFormat.format(Date(dateMillis))
 }
